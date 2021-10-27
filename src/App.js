@@ -1,25 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios';
+import React, {useState, useEffect} from 'react';
+import Form from './components/Form';
+import ImgList from './components/ImgList';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
+const App = () => {
+
+
+  const [state, setState] = useState({
+    searching:'',
+    images:[]
+
+  });
+  const {searching, images} = state;
+
+  useEffect(() =>{
+    
+    const apiFetching = async ()=>{
+      if(searching === '')return;
+
+      const ImagesPerPage = 30;
+      const apiKey = '24062452-00069afc6788085c0fc68f4a7';
+      const url = `https://pixabay.com/api/?key=${apiKey}&q=${searching}&per_page=${ImagesPerPage}`
+
+
+      const resp = await axios.get(url);
+      setState({images:resp.data.hits});
+
+    }
+    apiFetching();
+  },[searching])
+
+  return ( 
+    <div className="container">
+      <div className="jumbotron">
+        <p className="lead teaxt-center">
+          Search Free Stock Images
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+        <Form 
+          setState={setState}
+        />
 
+      </div>
+
+      <div className="row justify-content-center">
+        <ImgList 
+          images={images}
+        />
+      </div>
+    </div>
+   );
+}
+ 
 export default App;
