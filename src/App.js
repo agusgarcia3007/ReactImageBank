@@ -8,11 +8,8 @@ const App = () => {
 
   const [searching, setSearching] = useState('');
   const [images, setImages] = useState([]);
-  const [pages, setPages] = useState({
-    currentPage:1,
-    totalPages:1
-  })
-  const { currentPage, totalPages} = pages
+  const [currentPage, setCurrentPage]= useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() =>{
     
@@ -28,7 +25,7 @@ const App = () => {
       setImages(resp.data.hits);
 
       
-      setPages({"totalPages": Math.ceil(resp.data.totalHits / ImagesPerPage)});
+      setTotalPages(Math.ceil(resp.data.totalHits / ImagesPerPage));
 
       const jumbotron = document.querySelector('.jumbotron');
       jumbotron.scrollIntoView({behavior:'smooth'});
@@ -41,8 +38,7 @@ const App = () => {
   const previousPage = () => {
     const newCurrentPage = currentPage - 1;
     if(newCurrentPage === 0 )return;
-
-    setPages({"currentPage" : newCurrentPage})
+    setCurrentPage(newCurrentPage);
   }
 
   const nextPage = () => {
@@ -50,7 +46,7 @@ const App = () => {
 
     if(newCurrentPage > totalPages)return;
 
-    setPages({"currentPage" : newCurrentPage})
+    setCurrentPage(newCurrentPage);
     
   }
 
@@ -76,13 +72,15 @@ const App = () => {
             (<button
             type='button'
             className='btn btn-outline-success mr-1'
-            onClick={previousPage}> &laquo; Previous</button>)}
+            onClick={previousPage}
+            > &laquo; Previous</button>)}
         {(currentPage === totalPages) ? 
         null :
           (<button
         type='button'
         className='btn btn-outline-success mr-1'
-        onClick={nextPage}>Next &raquo;</button>) }
+        onClick={nextPage}
+        >Next &raquo;</button>) }
       </div>
     </div>
    );
