@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Error from './Error';
 
-const Form = ({setState}) => {
+const Form = ({setSearching}) => {
 
     const [keyWord, setKeyWord] = useState('');
     const [error, setError] = useState(false);
@@ -15,7 +15,7 @@ const Form = ({setState}) => {
         }
 
         setError(false);
-        setState({searching:keyWord});
+        setSearching(keyWord);
 
 
     }
@@ -30,7 +30,7 @@ const Form = ({setState}) => {
                         type='text'
                         className='form-control form-control-lg'
                         placeholder='E.g Coffee'
-                        onBlur={e => setKeyWord(e.target.value)}
+                        onChange={e => setKeyWord(e.target.value)}
                     />
                 </div>
                 <div className="form-group col-md-4">
@@ -42,7 +42,7 @@ const Form = ({setState}) => {
                 </div>
             </div>
 
-            {error ? <Error message='Please tell us what you are looking for :)'/> : null}
+            {error ? <Error message='Please tell us what you are looking for 😊'/> : null}
         </form>
      );
 }

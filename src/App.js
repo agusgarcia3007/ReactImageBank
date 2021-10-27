@@ -6,12 +6,13 @@ import ImgList from './components/ImgList';
 const App = () => {
 
 
-  const [state, setState] = useState({
-    searching:'',
-    images:[]
-
-  });
-  const {searching, images} = state;
+  const [searching, setSearching] = useState('');
+  const [images, setImages] = useState([]);
+  const [pages, setPages] = useState({
+    currentPage:1,
+    totalPages:1
+  })
+  const { currentPage, totalPages} = pages
 
   useEffect(() =>{
     
@@ -20,15 +21,38 @@ const App = () => {
 
       const ImagesPerPage = 30;
       const apiKey = '24062452-00069afc6788085c0fc68f4a7';
-      const url = `https://pixabay.com/api/?key=${apiKey}&q=${searching}&per_page=${ImagesPerPage}`
+      const url = `https://pixabay.com/api/?key=${apiKey}&q=${searching}&per_page=${ImagesPerPage}&page=${currentPage}`
 
 
       const resp = await axios.get(url);
-      setState({images:resp.data.hits});
+      setImages(resp.data.hits);
 
+      
+      setPages({"totalPages": Math.ceil(resp.data.totalHits / ImagesPerPage)});
+
+      const jumbotron = document.querySelector('.jumbotron');
+      jumbotron.scrollIntoView({behavior:'smooth'});
+
+      
     }
     apiFetching();
-  },[searching])
+  },[searching, currentPage]);
+
+  const previousPage = () => {
+    const newCurrentPage = currentPage - 1;
+    if(newCurrentPage === 0 )return;
+
+    setPages({"currentPage" : newCurrentPage})
+  }
+
+  const nextPage = () => {
+    const newCurrentPage = currentPage + 1;
+
+    if(newCurrentPage > totalPages)return;
+
+    setPages({"currentPage" : newCurrentPage})
+    
+  }
 
   return ( 
     <div className="container">
@@ -37,7 +61,7 @@ const App = () => {
           Search Free Stock Images
         </p>
         <Form 
-          setState={setState}
+          setSearching={setSearching}
         />
 
       </div>
@@ -46,6 +70,19 @@ const App = () => {
         <ImgList 
           images={images}
         />
+
+        { (currentPage ===1) ? 
+            null :
+            (<button
+            type='button'
+            className='btn btn-outline-success mr-1'
+            onClick={previousPage}> &laquo; Previous</button>)}
+        {(currentPage === totalPages) ? 
+        null :
+          (<button
+        type='button'
+        className='btn btn-outline-success mr-1'
+        onClick={nextPage}>Next &raquo;</button>) }
       </div>
     </div>
    );
